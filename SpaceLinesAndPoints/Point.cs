@@ -14,13 +14,15 @@ namespace SpaceLinesAndPoints
         public double yv;
         public static int width = 600;
         public static int height = 600;
+        public static int speed = 1;
         public static Random rnd = new Random();
         public Point(int x, int y)
         {
             this.x = x;
             this.y = y;
-            xv = - 1 + rnd.NextDouble()*2;
-            yv = - 1 + rnd.NextDouble()*2;
+            xv = (-1 + rnd.NextDouble() * 2) * speed;
+            yv = (-1 + rnd.NextDouble() * 2) * speed;
+
         }
 
         public void Update()

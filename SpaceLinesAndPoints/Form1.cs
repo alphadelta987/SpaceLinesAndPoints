@@ -26,7 +26,7 @@ namespace SpaceLinesAndPoints
             CreatePoints();
             timer1.Start();
             fullScreen = new FullScreen(this,panel1);
-            this.Text = "PRESS F12 TO GO FULL SCREEN";
+            this.Text = "PRESS F11 TO GO FULL SCREEN";
         }
         public void CreatePoints()
         {
@@ -129,10 +129,10 @@ namespace SpaceLinesAndPoints
             {
                 PreviousWindowState = TargetForm.WindowState;
                 TargetForm.WindowState = FormWindowState.Normal;
-                TargetForm.FormBorderStyle = FormBorderStyle.None;
+                //TargetForm.FormBorderStyle = FormBorderStyle.None;
                 TargetForm.WindowState = FormWindowState.Maximized;
-                int w = TargetForm.Width - 30;
-                int h = TargetForm.Height - 30;
+                int w = TargetForm.Width - 40;
+                int h = TargetForm.Height - 60;
                 panel1.Width = w;
                 panel1.Height = h;
                 Point.width = w;
