@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Numerics;
 
 namespace SpaceLinesAndPoints
 {
@@ -16,8 +17,12 @@ namespace SpaceLinesAndPoints
         List<Point> points = new List<Point> { };
         Graphics G;
         FullScreen fullScreen;
+        Brush b = new SolidBrush(Color.DarkGray);
+        Brush r = new SolidBrush(Color.DarkRed);
+        Pen y = new Pen(Color.DarkTurquoise, 1);
+        bool drawing = false;
         int LineDistance = 160;
-        int NumPoints = 200;
+        int NumPoints = 120;
         public Form1()
         {
             InitializeComponent();
@@ -41,36 +46,60 @@ namespace SpaceLinesAndPoints
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
+            drawing = true;
             G = e.Graphics;
 
             foreach(Point p1 in points)
             {
-                foreach(Point p2 in points)
+                p1.Update();
+                int mCount = 1;
+                foreach (Point p2 in points)
                 {
-                    double d = Distance(p1, p2);
-                    if (d < LineDistance){
-                        int s =255 - Convert.ToInt32((d / LineDistance) *255);
-                        Color shade = Color.FromArgb(s,255, 255, 255);
-                        Pen pen = new Pen(shade, (float) (0.8 - (d / LineDistance))*10);
-                        G.DrawLine(pen,(float)p1.x, (float)p1.y, (float)p2.x,(float)p2.y);
+                    if (p1 != p2)
+                    {
+                        double d = Distance(p1, p2);
+                        if (d < LineDistance)
+                        {
+                            int s = 255 - Convert.ToInt32((d / LineDistance) * 255);
+                            Color shade = Color.FromArgb(s, 255, 255, 255);
+                            Pen pen = new Pen(shade, (float)(0.8 - (d / LineDistance)) * 10);
+                            G.DrawLine(pen, (float)p1.x, (float)p1.y, (float)p2.x, (float)p2.y);
+                            mCount++;
+                        }
+                        if(d <= 10)
+                        {
+                            double rb = new Random().NextDouble();
+                            if (rb < 0.5)
+                            {
+                                p1.xv = -p2.xv * 1.1 + (rb / 10);
+                                p2.yv = -p1.yv * 1.1 + (rb / 10);
+                            }
+                            else
+                            {
+                                p1.yv = -p2.yv * 1.1 + (rb / 10);
+                                p2.xv = -p1.xv * 1.1 + (rb / 10);
+                            }
+                        }
+                        if(d < 20)G.DrawEllipse(y, (float)p1.x - 20, (float)p1.y - 20, 40, 40);
                     }
                 }
+                //this.Text = mCount.ToString();
+                p1.AddMoons(mCount);
             }
 
-            Brush b = new SolidBrush(Color.DarkGray);
             foreach (Point p1 in points)
             {
                 G.FillEllipse(b, (float)p1.x - 5, (float)p1.y - 5, 10, 10);
+                foreach (Vector2 moon in p1.moons)
+                {
+                    G.FillEllipse(r, moon.X - 2.5f, moon.Y - 2.5f, 5, 5);
+                }
             }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            foreach(Point p in points)
-            {
-                p.Update();
-            }
-            panel1.Invalidate();
+            panel1.Invalidate();            
         }
 
         private double Distance(Point p1, Point p2)
